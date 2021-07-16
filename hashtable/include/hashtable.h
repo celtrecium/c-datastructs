@@ -26,12 +26,12 @@ typedef struct hashtable {
   size_t size;
 } hashtable_t;
 
-hash_t hash_f (char *__key, hash_t __k);
-hashtable_t *ht_create (size_t __htbuckets);
-void *ht_get_f (hashtable_t *__ht, char *__key);
-void *ht_update_f (hashtable_t *__ht, char *__key, size_t __tsize);
-int ht_pop (hashtable_t *__ht, char *__key);
-int ht_free (hashtable_t *__ht);
+hash_t hash_f (char *key, hash_t k);
+hashtable_t *ht_create (size_t htbuckets);
+void *ht_get_f (hashtable_t *ht, char *key);
+void *ht_update_f (hashtable_t *ht, char *key, size_t tsize);
+int ht_pop (hashtable_t *ht, char *key);
+int ht_free (hashtable_t *ht);
 
 #define ht_update(ht, key, type, data) \
   *((type *) ht_update_f (ht, key, sizeof (type))) = data

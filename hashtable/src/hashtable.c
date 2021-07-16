@@ -15,81 +15,81 @@
  * along with Hashtable.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "hashtable.h"
+#include "../include/hashtable.h"
 #include <limits.h>
 
 #define HASH_N 3
 
 static hash_t
-__pow (hash_t __f, hash_t __s)
+__pow (hash_t f, hash_t s)
 {
-  while (--__s != 0)
-    __f *= __f;
+  while (--s != 0)
+    f *= f;
 
-  return __f;
+  return f;
 }
 
 static ht_pair_t
-__pair_create (hash_t __key, void *__data)
+__pair_create (hash_t key, void *data)
 {
   ht_pair_t pair;
 
-  pair.key = __key;
-  pair.data = __data;
+  pair.key = key;
+  pair.data = data;
 
   return pair;
 }
 
 hash_t
-hash_f (char *__key, hash_t __k)
+hash_f (char *key, hash_t k)
 {
   hash_t i = 0;
-  hash_t res = (hash_t)*__key++;
+  hash_t res = (hash_t)*key++;
 
-  while (*__key != 0)
+  while (*key != 0)
     {
       ++i;
-      res = (res + (hash_t)*__key * __pow (__k, i)) % ULONG_MAX;
-      ++__key;
+      res = (res + (hash_t)*key * __pow (k, i)) % ULONG_MAX;
+      ++key;
     }
 
   return res;
 }
 
 hashtable_t *
-ht_create (size_t __htbuckets)
+ht_create (size_t htbuckets)
 {
   hashtable_t *ptr = NULL;
   size_t i;
 
-  if (__htbuckets == 0)
+  if (htbuckets == 0)
     return NULL;
 
   ptr = malloc (sizeof (hashtable_t));
 
-  ptr->array = malloc (sizeof (list_t *) * __htbuckets);
-  ptr->size = __htbuckets;
+  ptr->array = malloc (sizeof (list_t *) * htbuckets);
+  ptr->size = htbuckets;
 
-  for (i = 0; i < __htbuckets; ++i)
+  for (i = 0; i < htbuckets; ++i)
     ptr->array[i] = ht_list_create ();
 
   return ptr;
 }
 
 void *
-ht_get_f (hashtable_t *__ht, char *__key)
+ht_get_f (hashtable_t *ht, char *key)
 {
-  hash_t fullkey = hash_f (__key, HASH_N);
-  size_t ind = fullkey % __ht->size;
+  hash_t fullkey = hash_f (key, HASH_N);
+  size_t ind = fullkey % ht->size;
   size_t i;
   ht_pair_t *pair;
 
-  if (ht_list_get_size (__ht->array[ind]) == 1)
-    return ht_list_get (__ht->array[ind], 0)->data;
+  if (ht_list_get_size (ht->array[ind]) == 1)
+    return ht_list_get (ht->array[ind], 0)->data;
 
-  for (i = 0; i < __ht->array[ind]->size; ++i)
+  for (i = 0; i < ht->array[ind]->size; ++i)
     {
-      pair = ht_list_get (__ht->array[ind], (int)i);
+      pair = ht_list_get (ht->array[ind], (int)i);
 
       if (pair->key == fullkey)
         return pair->data;
@@ -99,48 +99,48 @@ ht_get_f (hashtable_t *__ht, char *__key)
 }
 
 void *
-ht_update_f (hashtable_t *__ht, char *__key, size_t __tsize)
+ht_update_f (hashtable_t *ht, char *key, size_t tsize)
 {
-  hash_t fullkey = hash_f (__key, HASH_N);
-  size_t ind = fullkey % __ht->size;
+  hash_t fullkey = hash_f (key, HASH_N);
+  size_t ind = fullkey % ht->size;
 
-  return ht_list_push_back (__ht->array[ind],
+  return ht_list_push_back (ht->array[ind],
                             __pair_create (fullkey,
-                                           calloc (1, __tsize)))->data;
+                                           calloc (1, tsize)))->data;
 }
 
 int
-ht_pop (hashtable_t *__ht, char *__key)
+ht_pop (hashtable_t *ht, char *key)
 {
-  hash_t fullkey = hash_f (__key, HASH_N);
-  size_t ind = fullkey % __ht->size;
+  hash_t fullkey = hash_f (key, HASH_N);
+  size_t ind = fullkey % ht->size;
   size_t i;
   ht_pair_t *pair = NULL;
 
-  if (ht_list_get_size (__ht->array[ind]) == 0)
+  if (ht_list_get_size (ht->array[ind]) == 0)
     return EXIT_FAILURE;
 
-  if (ht_list_get_size (__ht->array[ind]) == 1)
-    ht_list_delete (__ht->array[ind], 0);
+  if (ht_list_get_size (ht->array[ind]) == 1)
+    ht_list_delete (ht->array[ind], 0);
   else
-    for (i = 0; i < __ht->array[ind]->size; ++i)
-      if ((pair = ht_list_get (__ht->array[ind], (int)i))->key
+    for (i = 0; i < ht->array[ind]->size; ++i)
+      if ((pair = ht_list_get (ht->array[ind], (int)i))->key
           == fullkey)
-        ht_list_delete (__ht->array[ind], (int)i);
+        ht_list_delete (ht->array[ind], (int)i);
 
   return EXIT_SUCCESS;
 }
 
 int
-ht_free (hashtable_t *__ht)
+ht_free (hashtable_t *ht)
 {
   size_t i;
 
-  for (i = 0; i < __ht->size; ++i)
-    ht_list_free (__ht->array[i]);
+  for (i = 0; i < ht->size; ++i)
+    ht_list_free (ht->array[i]);
 
-  free (__ht->array);
-  free (__ht);
+  free (ht->array);
+  free (ht);
 
   return EXIT_SUCCESS;
 }

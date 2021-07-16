@@ -15,7 +15,7 @@
  * along with Hashtable.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "htlinkedlist.h"
+#include "../include/htlinkedlist.h"
 #include <stdlib.h>
 
 static node_t *
@@ -30,28 +30,28 @@ __node_create (void)
 }
 
 static int
-__node_free (node_t *__nd)
+__node_free (node_t *nd)
 {
-  if (__nd->data.data != NULL)
-    free (__nd->data.data);
+  if (nd->data.data != NULL)
+    free (nd->data.data);
   
-  free (__nd);
+  free (nd);
 
   return EXIT_SUCCESS;
 }
 
 static node_t *
-__list_get_node (list_t *__ll, int __index)
+__list_get_node (list_t *ll, int index)
 {
   int i = 0;
-  node_t *ptr = __ll->first;
+  node_t *ptr = ll->first;
 
-  if (__ll->size == 0)
+  if (ll->size == 0)
     return NULL;
   
-  __index %= (int)__ll->size;
+  index %= (int)ll->size;
 
-  for (i = 0; i < __index; ++i)
+  for (i = 0; i < index; ++i)
     ptr = ptr->next;
 
   return ptr;
@@ -73,40 +73,40 @@ ht_list_create (void)
 }
 
 int
-ht_list_pop (list_t *__ll)
+ht_list_pop (list_t *ll)
 {
-  node_t *ptr = __ll->last->prev;
+  node_t *ptr = ll->last->prev;
   
-  if (__ll == NULL)
+  if (ll == NULL)
     return EXIT_FAILURE;
-  else if (__ll->size == 0)
+  else if (ll->size == 0)
     return EXIT_SUCCESS;
   
-  __ll->last->prev->next = NULL;
+  ll->last->prev->next = NULL;
 
-  __node_free (__ll->last);
+  __node_free (ll->last);
 
-  __ll->last = ptr;
-  --__ll->size;
+  ll->last = ptr;
+  --ll->size;
   
   return EXIT_SUCCESS;
 }
 
 int
-ht_list_delete (list_t *__ll, int __index)
+ht_list_delete (list_t *ll, int index)
 {
-  node_t *ptr = __ll->first;
+  node_t *ptr = ll->first;
   size_t i;
   
-  if (__ll == NULL)
+  if (ll == NULL)
     return EXIT_FAILURE;
   
-  __index %= (int)__ll->size;
+  index %= (int)ll->size;
 
-  if ((size_t) __index == __ll->size - 1)
-    return ht_list_pop (__ll);
+  if ((size_t) index == ll->size - 1)
+    return ht_list_pop (ll);
 
-  for (i = 0; i < (size_t)__index; ++i)
+  for (i = 0; i < (size_t)index; ++i)
     ptr = ptr->next;
 
   ptr->next->prev = ptr->prev;
@@ -114,10 +114,10 @@ ht_list_delete (list_t *__ll, int __index)
   if (ptr->prev != NULL)
     ptr->prev->next = ptr->next;
   
-  --__ll->size;
+  --ll->size;
 
-  if (__index == 0)
-    __ll->first = __ll->first->next;
+  if (index == 0)
+    ll->first = ll->first->next;
   
   __node_free (ptr);
 
@@ -125,110 +125,110 @@ ht_list_delete (list_t *__ll, int __index)
 }
 
 ht_pair_t *
-ht_list_push_front (list_t *__ll, ht_pair_t __pair)
+ht_list_push_front (list_t *ll, ht_pair_t pair)
 {
   node_t *nnode = NULL;
 
-  if (__ll == NULL)
+  if (ll == NULL)
     return NULL;
 
-  if (__ll->size != 0)
+  if (ll->size != 0)
     {
       nnode = __node_create ();
 
-      nnode->data = __ll->first->data;
-      nnode->prev = __ll->first;
-      nnode->next = __ll->first->next;
-      nnode->typesize = __ll->first->typesize;
+      nnode->data = ll->first->data;
+      nnode->prev = ll->first;
+      nnode->next = ll->first->next;
+      nnode->typesize = ll->first->typesize;
 
-      __ll->first->next = nnode;
+      ll->first->next = nnode;
     }
   else
-    __ll->first->next = NULL;
+    ll->first->next = NULL;
   
-  __ll->first->data = __pair;
-  __ll->first->prev = NULL;
+  ll->first->data = pair;
+  ll->first->prev = NULL;
   
-  ++__ll->size;
+  ++ll->size;
   
-  return &__ll->first->data;
+  return &ll->first->data;
 }
 
 ht_pair_t *
-ht_list_push_back (list_t *__ll, ht_pair_t __pair)
+ht_list_push_back (list_t *ll, ht_pair_t pair)
 {
   node_t *nnode = NULL;
 
-  if (__ll == NULL)
+  if (ll == NULL)
     return NULL;
 
-  if (__ll->size != 0)
+  if (ll->size != 0)
     {
       nnode = __node_create ();
 
-      nnode->data = __pair;
-      nnode->prev = __ll->last;
+      nnode->data = pair;
+      nnode->prev = ll->last;
       nnode->next = NULL;
   
-      __ll->last->next = nnode;
+      ll->last->next = nnode;
 
-      __ll->last = nnode;
+      ll->last = nnode;
     }
   else
     {
-      nnode = __ll->first;
+      nnode = ll->first;
 
-      nnode->data = __pair;
+      nnode->data = pair;
     }
   
-  ++__ll->size;
+  ++ll->size;
   
   return &nnode->data;
 }
 
 size_t
-ht_list_get_size (list_t *__ll)
+ht_list_get_size (list_t *ll)
 {
-  return __ll->size;
+  return ll->size;
 }
 
 ht_pair_t *
-ht_list_get (list_t *__ll, int __index)
+ht_list_get (list_t *ll, int index)
 {
-  return &__list_get_node (__ll, __index)->data;
+  return &__list_get_node (ll, index)->data;
 }
 
 int
-ht_list_free (list_t *__ll)
+ht_list_free (list_t *ll)
 {
-  node_t *ptr = __ll->first;
+  node_t *ptr = ll->first;
 
-  while (__ll->first != NULL)
+  while (ll->first != NULL)
     {
-      ptr = __ll->first->next;
+      ptr = ll->first->next;
 
-      __node_free (__ll->first);
+      __node_free (ll->first);
 
-      __ll->first = ptr;
+      ll->first = ptr;
     }
 
-  free (__ll);
+  free (ll);
   
   return EXIT_SUCCESS;
 }
 
 void *
-ht_list_foreach (list_t *__ll, void *(*__func) (ht_pair_t *__data))
+ht_list_foreach (list_t *ll, void *(*func) (ht_pair_t *data))
 {
-  node_t *ptr = __ll->first;
+  node_t *ptr = ll->first;
   void *retdat = NULL;
 
-  if (__ll->size == 0)
+  if (ll->size == 0)
     return NULL;
   
   while (ptr != NULL)
     {
-      if ((retdat = __func (&ptr->data)) != NULL)
+      if ((retdat = func (&ptr->data)) != NULL)
         return retdat;
       
       ptr = ptr->next;

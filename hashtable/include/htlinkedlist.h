@@ -45,14 +45,14 @@ typedef struct list
 } list_t;
 
 list_t *ht_list_create (void);
-int ht_list_delete (list_t *__ll, int __index);
-int ht_list_pop (list_t *__ll);
-ht_pair_t *ht_list_get (list_t *__ll, int __index);
-size_t ht_list_get_size (list_t *__ll);
-int ht_list_free (list_t *__ll);
-ht_pair_t *ht_list_push_front (list_t *__ll, ht_pair_t __data);
-ht_pair_t *ht_list_push_back (list_t *__ll, ht_pair_t __data);
-void *ht_list_foreach (list_t *__ll, void *(*__func) (ht_pair_t *__data));
+int ht_list_delete (list_t *ll, int index);
+int ht_list_pop (list_t *ll);
+ht_pair_t *ht_list_get (list_t *ll, int index);
+size_t ht_list_get_size (list_t *ll);
+int ht_list_free (list_t *ll);
+ht_pair_t *ht_list_push_front (list_t *ll, ht_pair_t data);
+ht_pair_t *ht_list_push_back (list_t *ll, ht_pair_t data);
+void *ht_list_foreach (list_t *ll, void *(*func) (ht_pair_t *data));
 
 #define list_set(list, index, type, data) \
   list_get (list, type, index) = data
