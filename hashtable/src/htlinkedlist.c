@@ -15,11 +15,11 @@
  * along with Hashtable.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../include/htlinkedlist.h"
+#include "htlinkedlist.h"
 #include <stdlib.h>
 
 static node_t *
-__node_create (void)
+node_create (void)
 {
   node_t *ret = malloc (sizeof (node_t));
 
@@ -30,7 +30,7 @@ __node_create (void)
 }
 
 static int
-__node_free (node_t *nd)
+node_free (node_t *nd)
 {
   if (nd->data.data != NULL)
     free (nd->data.data);
@@ -41,7 +41,7 @@ __node_free (node_t *nd)
 }
 
 static node_t *
-__list_get_node (list_t *ll, int index)
+list_get_node (list_t *ll, int index)
 {
   int i = 0;
   node_t *ptr = ll->first;
@@ -84,7 +84,7 @@ ht_list_pop (list_t *ll)
   
   ll->last->prev->next = NULL;
 
-  __node_free (ll->last);
+  node_free (ll->last);
 
   ll->last = ptr;
   --ll->size;
@@ -119,7 +119,7 @@ ht_list_delete (list_t *ll, int index)
   if (index == 0)
     ll->first = ll->first->next;
   
-  __node_free (ptr);
+  node_free (ptr);
 
   return EXIT_SUCCESS;
 }
@@ -134,7 +134,7 @@ ht_list_push_front (list_t *ll, ht_pair_t pair)
 
   if (ll->size != 0)
     {
-      nnode = __node_create ();
+      nnode = node_create ();
 
       nnode->data = ll->first->data;
       nnode->prev = ll->first;
@@ -164,7 +164,7 @@ ht_list_push_back (list_t *ll, ht_pair_t pair)
 
   if (ll->size != 0)
     {
-      nnode = __node_create ();
+      nnode = node_create ();
 
       nnode->data = pair;
       nnode->prev = ll->last;
@@ -195,7 +195,7 @@ ht_list_get_size (list_t *ll)
 ht_pair_t *
 ht_list_get (list_t *ll, int index)
 {
-  return &__list_get_node (ll, index)->data;
+  return &list_get_node (ll, index)->data;
 }
 
 int
@@ -207,7 +207,7 @@ ht_list_free (list_t *ll)
     {
       ptr = ll->first->next;
 
-      __node_free (ll->first);
+      node_free (ll->first);
 
       ll->first = ptr;
     }

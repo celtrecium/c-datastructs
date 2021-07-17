@@ -15,13 +15,13 @@
  * along with Hashtable.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "../include/hashtable.h"
+#include "hashtable.h"
 #include <limits.h>
 
 #define HASH_N 3
 
 static hash_t
-__pow (hash_t f, hash_t s)
+pow (hash_t f, hash_t s)
 {
   while (--s != 0)
     f *= f;
@@ -30,7 +30,7 @@ __pow (hash_t f, hash_t s)
 }
 
 static ht_pair_t
-__pair_create (hash_t key, void *data)
+pair_create (hash_t key, void *data)
 {
   ht_pair_t pair;
 
@@ -49,7 +49,7 @@ hash_f (char *key, hash_t k)
   while (*key != 0)
     {
       ++i;
-      res = (res + (hash_t)*key * __pow (k, i)) % ULONG_MAX;
+      res = (res + (hash_t)*key * pow (k, i)) % ULONG_MAX;
       ++key;
     }
 
@@ -105,8 +105,7 @@ ht_update_f (hashtable_t *ht, char *key, size_t tsize)
   size_t ind = fullkey % ht->size;
 
   return ht_list_push_back (ht->array[ind],
-                            __pair_create (fullkey,
-                                           calloc (1, tsize)))->data;
+                            pair_create (fullkey, calloc (1, tsize)))->data;
 }
 
 int
@@ -124,8 +123,7 @@ ht_pop (hashtable_t *ht, char *key)
     ht_list_delete (ht->array[ind], 0);
   else
     for (i = 0; i < ht->array[ind]->size; ++i)
-      if ((pair = ht_list_get (ht->array[ind], (int)i))->key
-          == fullkey)
+      if ((pair = ht_list_get (ht->array[ind], (int)i))->key == fullkey)
         ht_list_delete (ht->array[ind], (int)i);
 
   return EXIT_SUCCESS;
