@@ -18,10 +18,10 @@
 #include "htlinkedlist.h"
 #include <stdlib.h>
 
-static node_t *
+static htls_node_t *
 node_create (void)
 {
-  node_t *ret = malloc (sizeof (node_t));
+  htls_node_t *ret = malloc (sizeof (htls_node_t));
 
   ret->next = NULL;
   ret->prev = NULL;
@@ -30,7 +30,7 @@ node_create (void)
 }
 
 static int
-node_free (node_t *nd)
+node_free (htls_node_t *nd)
 {
   if (nd->data.data != NULL)
     free (nd->data.data);
@@ -40,11 +40,11 @@ node_free (node_t *nd)
   return EXIT_SUCCESS;
 }
 
-static node_t *
+static htls_node_t *
 list_get_node (list_t *ll, int index)
 {
   int i = 0;
-  node_t *ptr = ll->first;
+  htls_node_t *ptr = ll->first;
 
   if (ll->size == 0)
     return NULL;
@@ -61,7 +61,7 @@ list_t *
 ht_list_create (void)
 {
   list_t *ret = malloc (sizeof (list_t));
-  ret->first = ret->last = malloc (sizeof (node_t));
+  ret->first = ret->last = malloc (sizeof (htls_node_t));
 
   ret->first->next = NULL;
   ret->first->prev = NULL;
@@ -75,7 +75,7 @@ ht_list_create (void)
 int
 ht_list_pop (list_t *ll)
 {
-  node_t *ptr = ll->last->prev;
+  htls_node_t *ptr = ll->last->prev;
   
   if (ll == NULL)
     return EXIT_FAILURE;
@@ -95,7 +95,7 @@ ht_list_pop (list_t *ll)
 int
 ht_list_delete (list_t *ll, int index)
 {
-  node_t *ptr = ll->first;
+  htls_node_t *ptr = ll->first;
   size_t i;
   
   if (ll == NULL)
@@ -127,7 +127,7 @@ ht_list_delete (list_t *ll, int index)
 ht_pair_t *
 ht_list_push_front (list_t *ll, ht_pair_t pair)
 {
-  node_t *nnode = NULL;
+  htls_node_t *nnode = NULL;
 
   if (ll == NULL)
     return NULL;
@@ -157,7 +157,7 @@ ht_list_push_front (list_t *ll, ht_pair_t pair)
 ht_pair_t *
 ht_list_push_back (list_t *ll, ht_pair_t pair)
 {
-  node_t *nnode = NULL;
+  htls_node_t *nnode = NULL;
 
   if (ll == NULL)
     return NULL;
@@ -201,7 +201,7 @@ ht_list_get (list_t *ll, int index)
 int
 ht_list_free (list_t *ll)
 {
-  node_t *ptr = ll->first;
+  htls_node_t *ptr = ll->first;
 
   while (ll->first != NULL)
     {
@@ -220,7 +220,7 @@ ht_list_free (list_t *ll)
 void *
 ht_list_foreach (list_t *ll, void *(*func) (ht_pair_t *data))
 {
-  node_t *ptr = ll->first;
+  htls_node_t *ptr = ll->first;
   void *retdat = NULL;
 
   if (ll->size == 0)

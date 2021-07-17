@@ -29,18 +29,18 @@ typedef struct ht_pair
   void *data;
 } ht_pair_t;
 
-typedef struct node
+typedef struct htls_node
 {
   ht_pair_t data;
   size_t typesize;
   struct node *next;
   struct node *prev;
-} node_t;
+} htls_node_t;
 
 typedef struct list
 {
-  node_t *first;
-  node_t *last;
+  htls_node_t *first;
+  htls_node_t *last;
   size_t size;
 } list_t;
 

@@ -21,7 +21,7 @@
 #define HASH_N 3
 
 static hash_t
-pow (hash_t f, hash_t s)
+pow_f (hash_t f, hash_t s)
 {
   while (--s != 0)
     f *= f;
@@ -49,7 +49,7 @@ hash_f (char *key, hash_t k)
   while (*key != 0)
     {
       ++i;
-      res = (res + (hash_t)*key * pow (k, i)) % ULONG_MAX;
+      res = (res + (hash_t)*key * pow_f (k, i)) % ULONG_MAX;
       ++key;
     }
 
