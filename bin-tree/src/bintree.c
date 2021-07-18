@@ -17,13 +17,32 @@
 
 
 #include "bintree.h"
-#include <stdlib.h>
 
 #define node_get_left(index) \
   (2 * index + 1)
 
 #define node_get_right(index) \
   (2 * index + 2)
+
+#define get_add_size(index, bt) \
+  (((index / PAIRS_BLOCK) + !!(index % PAIRS_BLOCK)) * PAIRS_BLOCK)
+
+static void
+bt_increase_arr_sz (bintree_t *bt, size_t index)
+{
+  size_t newsz = 0;
+  
+  if (bt->_arr_size <= index)
+    {
+      newsz = get_add_size (index, bt);
+
+      bt->tree = realloc (bt->tree, newsz * sizeof (bt_pair_t));
+      memset (bt->tree + bt->_arr_size, 0,
+              (newsz - bt->_arr_size) * sizeof (bt_pair_t));
+
+      bt->_arr_size = newsz;
+    }
+}
 
 bintree_t *
 bintree_create (void)
@@ -51,6 +70,8 @@ bt_get_f (bintree_t *bt, bt_key_t key)
       else if (bt->tree[i].key == key)
         return bt->tree + i;
 
+      bt_increase_arr_sz (bt, i);
+      
       if (bt->tree[i].data == NULL)
         return bt->tree + i;
     }
@@ -73,12 +94,6 @@ bintree_push_f (bintree_t *bt, bt_key_t key, size_t tsize)
   if (bt == NULL)
     return NULL;
   
-  if (bt->size == bt->_arr_size)
-    {
-      bt->tree = realloc (bt->tree, bt->_arr_size + PAIRS_BLOCK);
-      bt->_arr_size += PAIRS_BLOCK;
-    }
-
   if (bt->size == 0)
     {
       bt->tree[0].data = calloc (1, tsize);
