@@ -19,7 +19,6 @@
 #define LINKEDLIST_H
 
 #include <stdlib.h>
-#include <string.h>
 
 typedef unsigned long int hash_t;
 
@@ -33,8 +32,8 @@ typedef struct htls_node
 {
   ht_pair_t data;
   size_t typesize;
-  struct node *next;
-  struct node *prev;
+  struct htls_node *next;
+  struct htls_node *prev;
 } htls_node_t;
 
 typedef struct list
