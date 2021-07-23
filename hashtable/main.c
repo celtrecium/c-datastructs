@@ -13,6 +13,13 @@ main (void)
           "Alexey is %d y.o.\n", ht_get (ht, "Maxim", int),
           ht_get (ht, "Alexey", int));
 
+  ht_pop (ht, "Alexey");
+  ht_update (ht, "Maxim", int, 15);
+  
+  printf ("Maxim is %d y.o.\n", ht_get (ht, "Maxim", int));
+
+  ht_pop (ht, "Maxim");
+  
   ht_free (ht);
   
   return EXIT_SUCCESS;

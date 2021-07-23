@@ -16,9 +16,6 @@
  */
 
 #include "hashtable.h"
-#include <limits.h>
-
-#define HASH_N 3
 
 static hash_t
 pow_f (hash_t f, hash_t s)
@@ -41,15 +38,14 @@ pair_create (hash_t key, void *data)
 }
 
 hash_t
-hash_f (char *key, hash_t k)
+hash_f (char *key)
 {
   hash_t i = 0;
   hash_t res = (hash_t)*key++;
 
-  while (*key != 0)
+  for (; *key != 0; ++i)
     {
-      ++i;
-      res = (res + (hash_t)*key * pow_f (k, i)) % ULONG_MAX;
+      res += (hash_t)*key * pow_f (i, 2);
       ++key;
     }
 
@@ -79,7 +75,7 @@ ht_create (size_t htbuckets)
 void *
 ht_get_f (hashtable_t *ht, char *key)
 {
-  hash_t fullkey = hash_f (key, HASH_N);
+  hash_t fullkey = hash_f (key);
   size_t ind = fullkey % ht->size;
   size_t i;
   ht_pair_t *pair;
@@ -101,9 +97,13 @@ ht_get_f (hashtable_t *ht, char *key)
 void *
 ht_update_f (hashtable_t *ht, char *key, size_t tsize)
 {
-  hash_t fullkey = hash_f (key, HASH_N);
+  hash_t fullkey = hash_f (key);
   size_t ind = fullkey % ht->size;
-
+  void *retifexists = ht_get_f (ht, key);
+  
+  if (retifexists != NULL)
+    return retifexists;
+  
   return ht_list_push_back (ht->array[ind],
                             pair_create (fullkey, calloc (1, tsize)))->data;
 }
@@ -111,7 +111,7 @@ ht_update_f (hashtable_t *ht, char *key, size_t tsize)
 int
 ht_pop (hashtable_t *ht, char *key)
 {
-  hash_t fullkey = hash_f (key, HASH_N);
+  hash_t fullkey = hash_f (key);
   size_t ind = fullkey % ht->size;
   size_t i;
   ht_pair_t *pair = NULL;

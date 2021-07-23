@@ -31,7 +31,6 @@ typedef struct ht_pair
 typedef struct htls_node
 {
   ht_pair_t data;
-  size_t typesize;
   struct htls_node *next;
   struct htls_node *prev;
 } htls_node_t;

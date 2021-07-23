@@ -26,7 +26,7 @@ typedef struct hashtable {
   size_t size;
 } hashtable_t;
 
-hash_t hash_f (char *key, hash_t k);
+hash_t hash_f (char *key);
 hashtable_t *ht_create (size_t htbuckets);
 void *ht_get_f (hashtable_t *ht, char *key);
 void *ht_update_f (hashtable_t *ht, char *key, size_t tsize);

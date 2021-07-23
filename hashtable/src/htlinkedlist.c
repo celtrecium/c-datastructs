@@ -21,7 +21,7 @@
 static htls_node_t *
 node_create (void)
 {
-  htls_node_t *ret = malloc (sizeof (htls_node_t));
+  htls_node_t *ret = calloc (1, sizeof (htls_node_t));
 
   ret->next = NULL;
   ret->prev = NULL;
@@ -66,7 +66,6 @@ ht_list_create (void)
   ret->first->next = NULL;
   ret->first->prev = NULL;
   ret->first->data.data = NULL;
-  ret->first->typesize = 0;
   ret->size = 0;
 
   return ret;
@@ -77,18 +76,29 @@ ht_list_pop (list_t *ll)
 {
   htls_node_t *ptr = ll->last->prev;
   
-  if (ll == NULL)
+  if (ll == NULL || ll->size == 0)
     return EXIT_FAILURE;
-  else if (ll->size == 0)
-    return EXIT_SUCCESS;
+ 
+  if (ll->size > 1)
+    {
+      ll->last->prev->next = NULL;
+
+      node_free (ll->last);
+
+      ll->last = ptr;
+    }
+  else
+    {
+      if (ll->first->data.data != NULL)
+        free (ll->first->data.data);
+
+      ll->first->data.data = NULL;
+      
+      ll->first->data.key = 0;
+    }
   
-  ll->last->prev->next = NULL;
-
-  node_free (ll->last);
-
-  ll->last = ptr;
   --ll->size;
-  
+
   return EXIT_SUCCESS;
 }
 
@@ -139,8 +149,7 @@ ht_list_push_front (list_t *ll, ht_pair_t pair)
       nnode->data = ll->first->data;
       nnode->prev = ll->first;
       nnode->next = ll->first->next;
-      nnode->typesize = ll->first->typesize;
-
+ 
       ll->first->next = nnode;
     }
   else
@@ -203,6 +212,9 @@ ht_list_free (list_t *ll)
 {
   htls_node_t *ptr = ll->first;
 
+  if (ll == NULL)
+    return EXIT_SUCCESS;
+  
   while (ll->first != NULL)
     {
       ptr = ll->first->next;
