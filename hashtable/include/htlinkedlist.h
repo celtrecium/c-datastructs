@@ -52,7 +52,4 @@ ht_pair_t *ht_list_push_front (list_t *ll, ht_pair_t data);
 ht_pair_t *ht_list_push_back (list_t *ll, ht_pair_t data);
 void *ht_list_foreach (list_t *ll, void *(*func) (ht_pair_t *data));
 
-#define list_set(list, index, type, data) \
-  list_get (list, type, index) = data
-
 #endif /* LINKEDLIST_H */
